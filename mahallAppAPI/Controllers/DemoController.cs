@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace mahallAppAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("demo")]
     [ApiController]
     public class DemoController : ControllerBase
     {
