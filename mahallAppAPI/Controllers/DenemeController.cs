@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 namespace mahallAppAPI.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("[controller]")]
     public class DenemeController : ControllerBase
     {
