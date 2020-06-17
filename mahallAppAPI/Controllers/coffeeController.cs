@@ -29,9 +29,9 @@ namespace mahallAppAPI.Controllers
 
         // POST api/<coffeeController>
         [HttpPost]
-        public IEnumerable<string> Post([FromBody] string value)
+        public ContentResult Post([FromBody] string value)
         {
-            return new string[] { "value1", "value2" };
+            return Content("askdhaskdjkasd");
         }
 
         // PUT api/<coffeeController>/5
