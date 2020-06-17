@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,8 +29,10 @@ namespace mahallAppAPI.Controllers
 
         // POST api/<coffeeController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public string Post([FromBody] string value)
         {
+            string s = "deneme";
+            return Ok(s);
         }
 
         // PUT api/<coffeeController>/5
