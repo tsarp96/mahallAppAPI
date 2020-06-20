@@ -11,7 +11,7 @@ namespace mahallAppAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class coffeeController : ControllerBase
+    public class CoffeeController : ControllerBase
     {
         // GET: api/<coffeeController>
         [HttpGet]
@@ -30,7 +30,7 @@ namespace mahallAppAPI.Controllers
         // POST api/<coffeeController>
         [HttpPost]
         public ContentResult Post([FromBody] string value)
-        {
+        {   
             return Content("askdhaskdjkasd");
         }
 
