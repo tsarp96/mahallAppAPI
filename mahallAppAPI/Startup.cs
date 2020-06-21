@@ -26,6 +26,10 @@ namespace mahallAppAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<IHashHelper, HashHelper>();
+            services.AddSingleton<IUserRepository, UserRepository>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +50,7 @@ namespace mahallAppAPI
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }
