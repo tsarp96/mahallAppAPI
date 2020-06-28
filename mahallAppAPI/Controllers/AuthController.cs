@@ -14,34 +14,14 @@ namespace mahallAppAPI.Controllers
     {
         private readonly IHashHelper _hashHelper;
         private readonly IUserRepository _userRepository;
-        private readonly AppSettings _appSettings;
+        private readonly IAuthenticationService _authenticationService;
         
-        public AuthController(IHashHelper hashHelper,IUserRepository userRepository, IOptions<AppSettings> appSettings)
+        public AuthController(IHashHelper hashHelper,IUserRepository userRepository,IAuthenticationService authenticationService)
         {
             this._hashHelper = hashHelper;
             this._userRepository = userRepository;
-            _appSettings = appSettings.Value;
-
+            this._authenticationService = authenticationService;
         }
-
-        private string generateJwtToken(UserInfo userInfo)
-        {
-            // generate token that is valid for 7 days
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, userInfo.Id)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-
 
         [HttpPost]
         public IActionResult Auth([FromBody] AuthRequest authRequest)
@@ -61,7 +41,7 @@ namespace mahallAppAPI.Controllers
                 return Unauthorized();
             }
 
-            var token = generateJwtToken(userInfo);
+            var token = _authenticationService.generateJwtToken(userInfo);
 
             return Ok(token);
         }

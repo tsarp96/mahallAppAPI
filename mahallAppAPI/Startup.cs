@@ -59,6 +59,7 @@ namespace mahallAppAPI
 
             services.AddSingleton<IHashHelper, HashHelper>();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             
         }
 
