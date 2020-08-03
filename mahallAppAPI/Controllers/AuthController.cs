@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,8 +18,9 @@ namespace mahallAppAPI.Controllers
         private readonly IHashHelper _hashHelper;
         private readonly IUserRepository _userRepository;
         private readonly IAuthenticationService _authenticationService;
-        
-        public AuthController(IHashHelper hashHelper,IUserRepository userRepository,IAuthenticationService authenticationService)
+        private readonly IConfiguration _config;
+
+        public AuthController(IHashHelper hashHelper, IUserRepository userRepository, IAuthenticationService authenticationService)
         {
             this._hashHelper = hashHelper;
             this._userRepository = userRepository;
@@ -24,6 +28,7 @@ namespace mahallAppAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Auth([FromBody] AuthRequest authRequest)
         {
             var isValidRequest = String.IsNullOrEmpty(authRequest.UserName) || String.IsNullOrEmpty(authRequest.Password);
@@ -45,5 +50,6 @@ namespace mahallAppAPI.Controllers
 
             return Ok(token);
         }
+
     }
 }

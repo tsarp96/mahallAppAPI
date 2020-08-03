@@ -2,11 +2,18 @@
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using Castle.Core.Configuration;
 using FluentAssertions;
+using Flurl.Http.Testing;
 using mahallAppAPI;
 using mahallAppAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Moq.Protected;
+using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace MahallAPITests
@@ -22,14 +29,17 @@ namespace MahallAPITests
 
         private Mock<IHashHelper> _hashHelper = new Mock<IHashHelper>(MockBehavior.Strict);
         private Mock<IUserRepository> _userRepository = new Mock<IUserRepository>(MockBehavior.Strict);
-        
+        private Mock<IAuthenticationService> _authenticationService = new Mock<IAuthenticationService>(MockBehavior.Loose);
+        private Mock<IConfiguration> _config = new Mock<IConfiguration>(MockBehavior.Loose);
+        private Mock<FakeHttpMessageHandler> _fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler>(MockBehavior.Loose);
+
         [Theory]
         [InlineData("")]
         [InlineData(null)]
         public void Auth_should_return_bad_request_when_username_is_null_or_empty(String username)
         {
             // arrange
-            var authController = new AuthController(_hashHelper.Object, _userRepository.Object);
+            var authController = new AuthController(_hashHelper.Object, _userRepository.Object, _authenticationService.Object);
             var authRequest = new AuthRequest();
             authRequest.UserName = username;
             
@@ -48,7 +58,7 @@ namespace MahallAPITests
         public void Auth_should_return_bad_request_when_password_is_null_or_empty(String password)
         {
             // arrange
-            var authController = new AuthController(_hashHelper.Object, _userRepository.Object);
+            var authController = new AuthController(_hashHelper.Object, _userRepository.Object, _authenticationService.Object);
             var authRequest = new AuthRequest();
             authRequest.UserName = "asdsad";
             authRequest.Password = password;
@@ -65,7 +75,7 @@ namespace MahallAPITests
         public void Auth_should_hash_password()
         {
             // arrange
-            var authController = new AuthController(_hashHelper.Object, _userRepository.Object);
+            var authController = new AuthController(_hashHelper.Object, _userRepository.Object, _authenticationService.Object);
             var authRequest = new AuthRequest();
             authRequest.UserName = "asdsad";
             authRequest.Password = "asddfgdf";
@@ -84,7 +94,7 @@ namespace MahallAPITests
         public void Auth_should_return_unauhtorized_when_not_existed_user()
         {
             // arrange
-            var authController = new AuthController(_hashHelper.Object, _userRepository.Object);
+            var authController = new AuthController(_hashHelper.Object, _userRepository.Object, _authenticationService.Object);
             var authRequest = new AuthRequest();
             authRequest.UserName = "asdsad";
             authRequest.Password = "asddfgdf";
@@ -108,7 +118,7 @@ namespace MahallAPITests
         public void Auth_should_return_userinfo_when_user_exist()
         {
             // arrange
-            var authController = new AuthController(_hashHelper.Object, _userRepository.Object);
+            var authController = new AuthController(_hashHelper.Object, _userRepository.Object, _authenticationService.Object);
             var authRequest = new AuthRequest();
             authRequest.UserName = "asdsad";
             authRequest.Password = "asddfgdf";
@@ -125,11 +135,19 @@ namespace MahallAPITests
             // assert
             ((OkObjectResult) result).StatusCode.Should().Be(HttpStatusCode.OK.GetHashCode());
             _userRepository.Verify(x => x.GetUserInfo(authRequest.UserName, hashedPassword), Times.Once);
-
-
         }
 
+        [Fact]
+        public async System.Threading.Tasks.Task Auth_should_return_unauhtorized_when_token_is_invalid()
+        {
+            // ARRANGE
+                // AuthController ındaki Auth methodunu gerekli kullanıcı adına çalıştır
 
-        
+            // ACT
+
+
+            // ASERT
+
+        }
     }
 }
