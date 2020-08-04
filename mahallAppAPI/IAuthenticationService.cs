@@ -2,6 +2,6 @@
 {
     public interface IAuthenticationService
     {
-        string generateJwtToken(UserInfo userInfo);
+        string GenerateJwtToken(UserInfo userInfo);
     }
 }
