@@ -62,12 +62,11 @@ namespace mahallAppAPI
                 };
             });
 
-            services.AddAuthorization();
-
             services.AddSingleton<IHashHelper, HashHelper>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
-            
+            services.AddSingleton<IUserService, UserService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

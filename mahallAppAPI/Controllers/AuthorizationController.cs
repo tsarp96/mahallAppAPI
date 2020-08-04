@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace mahallAppAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+   
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
        [HttpGet]
        [CustomAuthorization]
-        public ActionResult<IEnumerable<string>> Dinner()
+       [Route("api/v1/dinner")]
+        public ActionResult<String> Dinner()
         {
-            return new string[] { "value1", "value2", "value3", "value4", "value5" };
+            // TODO: return user name
+            return User.Identities.Select(x => x.Name).LastOrDefault() ;
         }
     }
 }

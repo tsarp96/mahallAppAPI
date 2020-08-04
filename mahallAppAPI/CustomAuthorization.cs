@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace mahallAppAPI
@@ -15,25 +19,26 @@ namespace mahallAppAPI
     {
         public void OnAuthorization(AuthorizationFilterContext filterContext)
         {
+            // OnAuthorization methoduna başka parametre ekleyemedim..
+            AuthorizationService authorizationService = new AuthorizationService();
+
             if (filterContext != null)
             {
                 Microsoft.Extensions.Primitives.StringValues authTokens;
-                filterContext.HttpContext.Request.Headers.TryGetValue("authToken", out authTokens);
+                var hasAuthorizationHeader = filterContext.HttpContext.Request.Headers.TryGetValue("authorization", out authTokens);
+                
+                var token = authTokens.FirstOrDefault();
 
-                var _token = authTokens.FirstOrDefault();
-
-                if (_token != null)
+                if (token != null && authTokens.ToString().Trim().StartsWith("Bearer"))
                 {
-                    string authToken = _token;
-                    if (authToken != null)
-                    {
-                        if (IsValidToken(authToken)) 
+                    string authToken = token;
+                   
+                        if (authorizationService.isValidToken(authToken, out var tokenn)) 
                         {
-                            filterContext.HttpContext.Response.Headers.Add("authToken", authToken);
-                            filterContext.HttpContext.Response.Headers.Add("AuthStatus", "Authorized");
-
-                            filterContext.HttpContext.Response.Headers.Add("storeAccessiblity", "Authorized");
-
+                            var claims = new List<Claim>();
+                            claims.Add(new Claim(ClaimTypes.Name, tokenn.Subject));
+                            var id = new ClaimsIdentity(claims);
+                            filterContext.HttpContext.User.AddIdentity(id);
                             return;
                         }
                         else
@@ -52,9 +57,6 @@ namespace mahallAppAPI
                                 },
                             };
                         }
-
-                    }
-
                 }
                 else
                 {
@@ -72,22 +74,5 @@ namespace mahallAppAPI
             }
         }
 
-        public bool IsValidToken(string authToken)
-        {
-            //validate Token here
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(authToken);
-            var tokenS = handler.ReadToken(authToken) as JwtSecurityToken;
-            var userNameInToken = tokenS.Subject;
-
-            if(userNameInToken == "osman") // HARD CODED
-            //TO DO:
-                // Is User in Database ?
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }
