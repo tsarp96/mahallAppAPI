@@ -46,7 +46,7 @@ namespace mahallAppAPI.Controllers
                 return Unauthorized();
             }
 
-            var token = _authenticationService.generateJwtToken(userInfo);
+            var token = _authenticationService.GenerateJwtToken(userInfo);
 
             return Ok(token);
         }
