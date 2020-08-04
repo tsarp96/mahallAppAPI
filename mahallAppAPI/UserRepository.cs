@@ -33,6 +33,29 @@ namespace mahallAppAPI
                 return conn.Query<UserInfo>($"SELECT * from users where username='{username}' and password='{password}'").FirstOrDefault();
             }
         }
+
+        public UserInfo GetUserInfo(string username)
+        {
+            using (var conn = OpenConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                return conn.Query<UserInfo>($"SELECT * from users where username='{username}'").FirstOrDefault();
+            }
+        }
+
+        public bool AddUser(UserInfo user)
+        {
+            using (var conn = OpenConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                try {
+                    conn.Query<UserInfo>($"INSERT INTO users(username,password) VALUES('{user.Username}','{user.Password}')");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+        }
     
         public static IDbConnection OpenConnection(string connStr)  
         {  
