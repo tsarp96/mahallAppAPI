@@ -5,5 +5,6 @@ namespace mahallAppAPI
         UserInfo GetUserInfo(string username, string password);
         UserInfo GetUserInfo(string username);
         bool AddUser(UserInfo user);
+        bool DeleteUser(string username);
     }
 }

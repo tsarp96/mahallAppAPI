@@ -33,5 +33,20 @@ namespace mahallAppAPI.Controllers
             _userService.AddUser(user);
             return "Başarıyla Kaydoldun Dostum :)";
         }
+
+        [HttpPost]
+        [CustomAuthorization]
+        [Route("api/v1/delete")]
+        public ActionResult<String> Delete([FromBody] DeleteRequest deleteRequest)
+        {
+            UserInfo user = new UserInfo();
+            user.Username = deleteRequest.UserName;
+            if (_userService.GetUserByName(user.Username) == null)
+            {
+                return "User Not Found !";
+            }
+            _userService.DeleteUserByName(user.Username);
+            return "User is deleted !";
+        }
     }
 }

@@ -56,6 +56,22 @@ namespace mahallAppAPI
                 }
             }
         }
+
+        public bool DeleteUser(string username)
+        {
+            using (var conn = OpenConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                try
+                {
+                    conn.Query<UserInfo>($"DELETE FROM users WHERE username='{username}'");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+        }
     
         public static IDbConnection OpenConnection(string connStr)  
         {  
@@ -63,7 +79,5 @@ namespace mahallAppAPI
             conn.Open();  
             return conn;  
         }  
-        
-
     }
 }
