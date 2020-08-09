@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Amazon.Runtime;
+using Amazon.S3.Transfer;
+using System.IO;
 
 namespace mahallAppAPI.Services
 {
@@ -65,5 +67,56 @@ namespace mahallAppAPI.Services
                 Status = HttpStatusCode.InternalServerError
             };
         }
+
+        private const string FilePath = "C:\\Users\\TUNA\\source\\repos\\mahallAppAPI\\mahallAppAPI\\amazon_test.txt";
+        private const string UploadWithKeyName = "newFileNameForUpload";
+        private const string FileStreamUpload = "FileStreamUpload";
+        private const string AdvancedUpload = "AdvancedUpload";
+
+        public async Task UploadFileAsync(string bucketName)
+        {
+            try
+            {
+                var fileTransferUtility = new TransferUtility(_client);
+
+                //Option1
+                await fileTransferUtility.UploadAsync(FilePath, bucketName);
+
+                //Option2
+                await fileTransferUtility.UploadAsync(FilePath, bucketName, UploadWithKeyName);
+
+                //Option3
+                using (var fileToUpload = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                {
+                    await fileTransferUtility.UploadAsync(fileToUpload, bucketName, FileStreamUpload);
+                }
+
+                //Option4
+                var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+                {
+                    BucketName = bucketName,
+                    FilePath = FilePath,
+                    StorageClass = S3StorageClass.Standard,
+                    PartSize = 6291456, //6 MB
+                    Key = AdvancedUpload,
+                    CannedACL = S3CannedACL.NoACL
+                };
+
+                fileTransferUtilityRequest.Metadata.Add("param1", "Value1");
+                fileTransferUtilityRequest.Metadata.Add("param2", "Value2");
+
+                await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
+
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when writing an object", e.Message);
+            }
+        }
+
     }
 }

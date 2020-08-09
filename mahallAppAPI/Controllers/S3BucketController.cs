@@ -19,10 +19,19 @@ namespace mahallAppAPI.Controllers
             _service = service;
         }
 
-        [HttpPost("{bucketName}")]
+        [HttpPost("CreateBucket/{bucketName}")]
         public async Task<IActionResult> CreateBucket([FromRoute] string bucketname)
         {
             var response = await _service.CreateBucketAsync(bucketname);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("AddFile/{bucketName}")]
+        public async Task<IActionResult> AddFile([FromRoute] string bucketname)
+        {
+            await _service.UploadFileAsync(bucketname);
+
             return Ok();
         }
     }
