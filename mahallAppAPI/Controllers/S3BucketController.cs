@@ -34,5 +34,14 @@ namespace mahallAppAPI.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route("GetFile/{bucketName}")]
+        public async Task<IActionResult> GetObjectFromS3Async([FromRoute] string bucketName)
+        {
+            await _service.GetObjectFromS3Async(bucketName);
+
+            return Ok();
+        }
     }
 }

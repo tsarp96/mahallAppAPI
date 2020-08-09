@@ -11,5 +11,6 @@ namespace mahallAppAPI.Services
     {
         Task<S3Response> CreateBucketAsync(string bucketName);
         Task UploadFileAsync(string bucketName);
+        Task GetObjectFromS3Async(string bucketName);
     }
 }

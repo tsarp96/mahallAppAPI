@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.S3.Transfer;
 using System.IO;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace mahallAppAPI.Services
 {
@@ -118,5 +119,47 @@ namespace mahallAppAPI.Services
             }
         }
 
+        public async Task GetObjectFromS3Async(string bucketName)
+        {
+            const string keyName = "amazon_test.txt";
+
+            try
+            {
+                var request = new GetObjectRequest()
+                {
+                    BucketName = bucketName,
+                    Key = keyName
+                };
+
+                string responseBody;
+
+                using (var response = await _client.GetObjectAsync(request)) 
+                using (var responseStream = response.ResponseStream)
+                using (var reader = new StreamReader(responseStream))
+                {
+                    var title = response.Metadata["x-amz-meta-title"];
+                    var contentType = response.Headers["Content-Type"];
+
+                    Console.WriteLine($"Object meta, Title: {title}");
+                    Console.WriteLine($"Content type: {contentType}");
+
+                    responseBody = reader.ReadToEnd();
+                }
+
+                var pathAndFileName = $"C:\\Users\\TUNA\\Desktop\\{keyName}";
+
+                var createText = responseBody;
+
+                //File.WriteAllText(pathAndFileName, createText);  no need for that ,  just for testing
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when writing an object", e.Message);
+            }
+        }
     }
 }
