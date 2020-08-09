@@ -5,6 +5,8 @@ using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.S3;
+using mahallAppAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -66,7 +68,8 @@ namespace mahallAppAPI
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddSingleton<IUserService, UserService>();
-
+            services.AddSingleton<IS3Service, S3Service>();
+            services.AddAWSService<IAmazonS3>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
