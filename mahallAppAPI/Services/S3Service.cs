@@ -11,6 +11,8 @@ using Amazon.Runtime;
 using Amazon.S3.Transfer;
 using System.IO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Http;
+using System.Threading;
 
 namespace mahallAppAPI.Services
 {
@@ -74,39 +76,41 @@ namespace mahallAppAPI.Services
         private const string FileStreamUpload = "FileStreamUpload";
         private const string AdvancedUpload = "AdvancedUpload";
 
-        public async Task UploadFileAsync(string bucketName)
+        public async Task UploadFileAsync(string bucketName, IFormFile file )
         {
             try
             {
                 var fileTransferUtility = new TransferUtility(_client);
 
-                //Option1
-                await fileTransferUtility.UploadAsync(FilePath, bucketName);
+                await fileTransferUtility.UploadAsync(file.OpenReadStream(), bucketName, file.FileName);
 
-                //Option2
-                await fileTransferUtility.UploadAsync(FilePath, bucketName, UploadWithKeyName);
+                ////Option1
+                //await fileTransferUtility.UploadAsync(FilePath, bucketName);
 
-                //Option3
-                using (var fileToUpload = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
-                {
-                    await fileTransferUtility.UploadAsync(fileToUpload, bucketName, FileStreamUpload);
-                }
+                ////Option2
+                //await fileTransferUtility.UploadAsync(FilePath, bucketName, UploadWithKeyName);
 
-                //Option4
-                var fileTransferUtilityRequest = new TransferUtilityUploadRequest
-                {
-                    BucketName = bucketName,
-                    FilePath = FilePath,
-                    StorageClass = S3StorageClass.Standard,
-                    PartSize = 6291456, //6 MB
-                    Key = AdvancedUpload,
-                    CannedACL = S3CannedACL.NoACL
-                };
+                ////Option3
+                //using (var fileToUpload = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                //{
+                //    await fileTransferUtility.UploadAsync(fileToUpload, bucketName, FileStreamUpload);
+                //}
 
-                fileTransferUtilityRequest.Metadata.Add("param1", "Value1");
-                fileTransferUtilityRequest.Metadata.Add("param2", "Value2");
+                ////Option4
+                //var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+                //{
+                //    BucketName = bucketName,
+                //    FilePath = FilePath,
+                //    StorageClass = S3StorageClass.Standard,
+                //    PartSize = 6291456, //6 MB
+                //    Key = AdvancedUpload,
+                //    CannedACL = S3CannedACL.NoACL
+                //};
 
-                await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
+                //fileTransferUtilityRequest.Metadata.Add("param1", "Value1");
+                //fileTransferUtilityRequest.Metadata.Add("param2", "Value2");
+
+                //await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
 
             }
             catch (AmazonS3Exception e)
@@ -160,6 +164,28 @@ namespace mahallAppAPI.Services
             {
                 Console.WriteLine("Error encountered on server. Messeage:'{0}' when writing an object", e.Message);
             }
+        }
+
+        public async Task DeleteFileFroms3Async(string fileName,string bucketName)
+        {
+            try
+            {
+                var request = new DeleteObjectRequest()
+                {
+                    BucketName = bucketName,
+                    Key = fileName
+                };
+                await _client.DeleteObjectAsync(request);
+            }
+            catch(AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when deleting an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Messeage:'{0}' when deleting an object", e.Message);
+            }
+
         }
     }
 }

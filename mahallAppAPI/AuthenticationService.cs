@@ -31,13 +31,13 @@ namespace mahallAppAPI
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                _config["Jwt:Issuer"],
-               claims:  new List<Claim>
+               claims: new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, userInfo.Username),
-                    new Claim(JwtRegisteredClaimNames.NameId, userInfo.Id)
+                    new Claim("userId", userInfo.Id)
                 },
                expires: DateTime.Now.AddMinutes(120),
-               signingCredentials: credentials);
+               signingCredentials: credentials); ;
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
