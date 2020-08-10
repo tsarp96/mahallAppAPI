@@ -18,13 +18,11 @@ namespace mahallAppAPI
     {
         private readonly AppSettings _appSettings;
         private readonly IConfiguration _config;
-        private ClaimsIdentity Subject;
         public AuthenticationService(IOptions<AppSettings> appSettings, IConfiguration config)
         {
             this._appSettings = appSettings.Value;
             this._config = config;
         }
-
 
         public string GenerateJwtToken(UserInfo userInfo)
         {
@@ -33,12 +31,13 @@ namespace mahallAppAPI
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                _config["Jwt:Issuer"],
-               claims:  new List<Claim>
+               claims: new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, userInfo.Username),
+                    new Claim("userId", userInfo.Id)
                 },
                expires: DateTime.Now.AddMinutes(120),
-               signingCredentials: credentials);
+               signingCredentials: credentials); ;
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

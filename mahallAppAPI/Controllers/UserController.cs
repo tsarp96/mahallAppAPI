@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Amazon;
+using Amazon.S3;
+using Amazon.S3.Transfer;
 
 namespace mahallAppAPI.Controllers
 {
@@ -32,6 +38,21 @@ namespace mahallAppAPI.Controllers
             }
             _userService.AddUser(user);
             return "Başarıyla Kaydoldun Dostum :)";
+        }
+
+        [HttpPost]
+        [CustomAuthorization]
+        [Route("api/v1/delete")]
+        public ActionResult<String> Delete([FromBody] DeleteRequest deleteRequest)
+        {
+            UserInfo user = new UserInfo();
+            user.Username = deleteRequest.UserName;
+            if (_userService.GetUserByName(user.Username) == null)
+            {
+                return "User Not Found !";
+            }
+            _userService.DeleteUserByName(user.Username);
+            return "User is deleted !";
         }
     }
 }

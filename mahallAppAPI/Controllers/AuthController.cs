@@ -39,7 +39,7 @@ namespace mahallAppAPI.Controllers
 
             var hash = _hashHelper.Hash(authRequest.Password);
 
-            var userInfo = _userRepository.GetUserInfo(authRequest.UserName, "123");
+            var userInfo = _userRepository.GetUserInfo(authRequest.UserName, authRequest.Password);
 
             if (userInfo == null)
             {

@@ -24,6 +24,14 @@ namespace mahallAppAPI
             return false ;
         }
 
+        public bool DeleteUserByName(string username)
+        {
+            if (_userRepository.DeleteUser(username)) {
+                return true;
+            }
+            return false;
+        }
+
         public UserInfo GetUserByName(string username)
         {
             return _userRepository.GetUserInfo(username);

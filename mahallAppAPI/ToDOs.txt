@@ -1,0 +1,24 @@
+﻿NEIGBERHOOD REPOSITORY
+	Mahalleye özel kurumlar, kuruluşlar
+
+	KurumID
+	UserID
+	Kurum Adı
+	Type (muhtarlık,belediye,valilik)
+
+site
+site kendi postluyor
+
+komşular post atıyor
+
+Ulaş Zoom Meeting 
+
+Feed
+Login - Register
+
+bol bol API 
+İBB, Iski , IETT   -- 
+Mahalleli po
+
+fakir ve siteli
+

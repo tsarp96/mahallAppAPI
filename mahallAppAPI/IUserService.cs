@@ -9,5 +9,6 @@ namespace mahallAppAPI
     {
         bool AddUser(UserInfo user);
         UserInfo GetUserByName(string username);
+        bool DeleteUserByName(string username);
     }
 }
